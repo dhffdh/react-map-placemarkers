@@ -59,8 +59,6 @@ class App extends Component {
 
     componentDidMount() {
 
-        console.log( Array.from(this.state.markers, (placemark, i) => placemark.coordinates ) )
-
     }
 
     inputOnChangeHandler(event) {
@@ -86,7 +84,7 @@ class App extends Component {
 
     listMarkerClickHandler(event,placemark,index) {
 
-        //console.log('listMarkerClickHandler: ', index , placemark);
+        console.log('listMarker Click: ', index , placemark);
 
         let newMarkers = this.state.markers;
 
@@ -97,14 +95,41 @@ class App extends Component {
             return elPlacemark;
         });
 
-
         newMarkers[index].selected = !bSelected;
+
+        console.log('newMarkers: ', newMarkers);
 
         this.setState({
             markers: newMarkers
         });
 
     }
+
+    listMarkerDeleteClickHandler(event,placemark,index) {
+
+
+        event.preventDefault();
+
+        console.log('listMarker Delete Click: ', index , placemark);
+
+        let newMarkers = this.state.markers.filter((elPlacemark,i) => {
+            //console.log('elPlacemark: ', i,elPlacemark);
+
+            return index !== i;
+        });
+
+
+        console.log('newMarkers: ', newMarkers);
+
+        this.setState({
+            markers: newMarkers
+        });
+
+    }
+
+
+
+
 
     mapMarkerOnDragEndHandler(event,placemark,index){
         const trgt = event.originalEvent.target,
@@ -120,6 +145,9 @@ class App extends Component {
 
     }
 
+
+
+
     render() {
 
         const { width, height } = this.mapState;
@@ -130,7 +158,6 @@ class App extends Component {
 
                     <div className="row">
                         <div className="col-md-5">
-
 
                             <form className="" onSubmit={this.formOnSubmitHandler}>
                                 <div className="row">
@@ -156,11 +183,15 @@ class App extends Component {
                                         .map( (placemark,i) => {
                                             //console.log(i,placemark);
                                             return <li key={'marker_'+i}
-                                                       className={ "list-group-item d-flex justify-content-between align-items-cente " + (placemark.selected ? "active" : "") }
-                                                       onClick={ (event) => this.listMarkerClickHandler(event,placemark,i) }
+                                                       className={ "marker list-group-item d-flex justify-content-between align-items-center " + (placemark.selected ? "active" : "") }
+
                                             >
-                                                <span>{ placemark.name } [ { round100(placemark.coordinates[0]) + " , " + round100(placemark.coordinates[1]) } ]</span>
-                                                <span className="close-icon">×</span>
+                                                <span className="marker-name" onClick={ (event) => this.listMarkerClickHandler(event,placemark,i) }>{ placemark.name } [ { round100(placemark.coordinates[0]) + " , " + round100(placemark.coordinates[1]) } ]</span>
+
+                                                <button type="button" className="close" onClick={ (event) => this.listMarkerDeleteClickHandler(event,placemark,i) } >
+                                                    <span>&times;</span>
+                                                </button>
+
                                             </li>
                                         })
                                 }

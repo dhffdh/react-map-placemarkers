@@ -2,13 +2,9 @@
   margin-top: 2em;
 }
 
-.close-icon{
-  font-size: 1.4em;
-  font-weight: bold;
-  cursor: pointer;
-  line-height: 1;
-  color: #b9b9b9;
-  &:hover{
-    color: #c60005;
+
+.marker{
+  &-name{
+    cursor: pointer;
   }
 }
