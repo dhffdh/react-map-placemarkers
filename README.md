@@ -3,3 +3,5 @@
 ## react-map-placemarkers
 
 Задание: https://dl.funbox.ru/qt-js.pdf
+
+- npm start
