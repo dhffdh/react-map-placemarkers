@@ -2,13 +2,18 @@ import React, {Component, PureComponent}  from 'react';
 import './App.scss';
 import { YMaps, Map, Polyline, GeoObject } from 'react-yandex-maps';
 
-const round100 = function ($n) {
+const round100 = ($n) => {
     return Math.round(($n)*100)/100
 };
 
+
 class App extends Component {
 
-
+    /**
+     * Параметры карты
+     *
+     * @type {{center: number[], zoom: number, width: string, height: number}}
+     */
     mapState = {
         center: [55.75, 37.57],
         zoom: 10,
