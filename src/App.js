@@ -1,4 +1,4 @@
-import React, {Component, PureComponent}  from 'react';
+import React, {Component}  from 'react';
 import './App.scss';
 import { YMaps, Map, Polyline, GeoObject } from 'react-yandex-maps';
 
