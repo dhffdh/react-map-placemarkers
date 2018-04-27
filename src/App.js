@@ -2,9 +2,7 @@ import React, {Component, PureComponent}  from 'react';
 import './App.scss';
 import { YMaps, Map, Polyline, GeoObject } from 'react-yandex-maps';
 
-const round100 = ($n) => {
-    return Math.round(($n)*100)/100
-};
+const round100 = $n => Math.round(($n)*100)/100;
 
 
 class App extends Component {
