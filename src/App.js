@@ -67,10 +67,21 @@ class App extends Component {
         this.dragEndHandler = this.dragEndHandler.bind(this);
     }
 
+    /**
+     * Байдинг инпута в стейт
+     *
+     * @param ev
+     */
     inputOnChangeHandler(ev) {
         this.setState({markerInput: ev.target.value});
     }
 
+    /**
+     * Отправка формы.
+     * Добавляет новый маркер в центр карты.
+     *
+     * @param ev
+     */
     formOnSubmitHandler(ev) {
         ev.preventDefault();
         if(!!this.state.markerInput && this.state.markerInput.length > 0){
@@ -86,6 +97,13 @@ class App extends Component {
         }
     }
 
+    /**
+     * Клик по лист-итему списка маркеров.
+     * После клика происходит выделение маркера.
+     *
+     * @param ev
+     * @param index
+     */
     listMarkerClickHandler(ev,index) {
         let newMarkers = this.state.markers,
             bSelected = newMarkers[index].selected;
@@ -104,7 +122,6 @@ class App extends Component {
     }
 
     /**
-     * Клик по лист-итему списка маркеров
      *
      * @param ev
      * @param index
