@@ -13,14 +13,18 @@ const round100 = function ($n) {
 
 class App extends Component {
 
+
     mapState = {
         center: [55.75, 37.57],
         zoom: 10,
         width: '100%',
         height: 400,
-        small: true
     };
 
+    /**
+     * Стартовый набор маркеров
+     * @type {*[]}
+     */
     placemarkersStart = [
         {
             name: 'Маркер 1',
@@ -48,7 +52,6 @@ class App extends Component {
         }
     ];
 
-
     constructor(props) {
         super(props);
         this.state = {
@@ -61,45 +64,33 @@ class App extends Component {
         this.inputOnChangeHandler = this.inputOnChangeHandler.bind(this);
         this.formOnSubmitHandler = this.formOnSubmitHandler.bind(this);
 
-        this.dragStart = this.dragStart.bind(this);
-        this.dragOver = this.dragOver.bind(this);
-        this.dragEnd = this.dragEnd.bind(this);
-
-
+        this.dragStartHandler = this.dragStartHandler.bind(this);
+        this.dragOverHandler = this.dragOverHandler.bind(this);
+        this.dragEndHandler = this.dragEndHandler.bind(this);
     }
 
-    componentDidMount() {
-
+    inputOnChangeHandler(ev) {
+        this.setState({markerInput: ev.target.value});
     }
 
-    inputOnChangeHandler(event) {
-        this.setState({markerInput: event.target.value});
-    }
-
-    formOnSubmitHandler(event) {
-        event.preventDefault();
+    formOnSubmitHandler(ev) {
+        ev.preventDefault();
         if(!!this.state.markerInput && this.state.markerInput.length > 0){
-            //console.log('A name was submitted: ' + this.state.markerInput);
             this.state.markers.push({
                 name: this.state.markerInput,
                 coordinates: this.mapState.center,
                 selected: false,
                 draggable: true
             });
-
             this.setState({
                 markerInput: ""
             });
         }
     }
 
-    listMarkerClickHandler(event,placemark,index) {
-
-        //console.log('listMarker Click: ', index , placemark);
-
-        let newMarkers = this.state.markers;
-
-        let bSelected = newMarkers[index].selected;
+    listMarkerClickHandler(ev,index) {
+        let newMarkers = this.state.markers,
+            bSelected = newMarkers[index].selected;
 
         newMarkers.map((elPlacemark,i) => {
             elPlacemark.selected = false;
@@ -108,32 +99,38 @@ class App extends Component {
 
         newMarkers[index].selected = !bSelected;
 
-        //console.log('newMarkers: ', newMarkers);
-
         this.setState({
             markers: newMarkers
         });
 
     }
 
-    listMarkerDeleteClickHandler(event,placemark,index) {
-        event.preventDefault();
-        //console.log('listMarker Delete Click: ', index , placemark);
+    /**
+     * Клик по лист-итему списка маркеров
+     *
+     * @param ev
+     * @param index
+     */
+    listMarkerDeleteClickHandler(ev,index) {
+        ev.preventDefault();
 
         let newMarkers = this.state.markers.filter((elPlacemark,i) => {
-            //console.log('elPlacemark: ', i,elPlacemark);
-
             return index !== i;
         });
-        //console.log('newMarkers: ', newMarkers);
 
         this.setState({
             markers: newMarkers
         });
     }
 
-    mapMarkerOnDragEndHandler(event,placemark,index){
-        const trgt = event.originalEvent.target,
+    /**
+     * Перенос маркера на карте
+     *
+     * @param ev
+     * @param index
+     */
+    mapMarkerOnDragEndHandler(ev,index){
+        const trgt = ev.originalEvent.target,
             newCoords = trgt.geometry._coordinates;
 
         let newMarkers = this.state.markers;
@@ -146,14 +143,25 @@ class App extends Component {
     }
 
 
-    sort(markers, dragging) {
+    /**
+     * Тулза для устновки стейта полей
+     *
+     * @param markers
+     * @param dragging
+     */
+    setMarkersAndDragging(markers, dragging) {
         const state = this.state;
         state.markers = markers;
         state.dragging = dragging;
         this.setState({state});
     }
 
-    dragStart(ev) {
+    /**
+     * Старт ДрагДропа
+     *
+     * @param ev
+     */
+    dragStartHandler(ev) {
         this.state.dragged = Number(ev.currentTarget.dataset.id);
         ev.dataTransfer.effectAllowed = 'move';
 
@@ -162,7 +170,12 @@ class App extends Component {
         ev.dataTransfer.setData("text/html", null);
     }
 
-    dragOver (ev) {
+    /**
+     *
+     *
+     * @param ev
+     */
+    dragOverHandler (ev) {
         ev.preventDefault();
         const items = this.state.markers;
         const over = ev.currentTarget;
@@ -171,11 +184,16 @@ class App extends Component {
         let to = Number(over.dataset.id);
 
         items.splice(to, 0, items.splice(from,1)[0]);
-        this.sort(items, to);
+        this.setMarkersAndDragging(items, to);
     }
 
-    dragEnd(ev) {
-        this.sort(this.state.markers, undefined);
+    /**
+     * Конец ДрагДропа
+     *
+     * @param ev
+     */
+    dragEndHandler(ev) {
+        this.setMarkersAndDragging(this.state.markers, undefined);
     }
 
 
@@ -212,19 +230,17 @@ class App extends Component {
                                 {
                                     this.state.markers
                                         .map( (placemark,i) => {
-                                            //console.log(i,placemark);
                                             return <li
-                                                       className={ "marker list-group-item d-flex justify-content-between align-items-center " + (placemark.selected ? "active" : "") + (i === this.state.dragging ? " dragging " : "") }
+                                                       className={ "marker list-group-item d-flex justify-content-between align-items-center " + (placemark.selected ? "active " : "") + (i === this.state.dragging ? "dragging " : "") }
                                                        data-id={i}
                                                        key={i}
                                                        draggable="true"
-                                                       onDragStart={this.dragStart}
-                                                       onDragOver={this.dragOver}
-                                                       onDragEnd={this.dragEnd}
+                                                       onDragStart={this.dragStartHandler}
+                                                       onDragOver={this.dragOverHandler}
+                                                       onDragEnd={this.dragEndHandler}
                                             >
-                                                <span className="marker-name" onClick={ (event) => this.listMarkerClickHandler(event,placemark,i) }>{ placemark.name } [ { round100(placemark.coordinates[0]) + " , " + round100(placemark.coordinates[1]) } ]</span>
-
-                                                <button type="button" className="close" onClick={ (event) => this.listMarkerDeleteClickHandler(event,placemark,i) } >
+                                                <span className="marker-name" onClick={ (ev) => this.listMarkerClickHandler(ev,i) }>{ placemark.name } [ { round100(placemark.coordinates[0]) + " , " + round100(placemark.coordinates[1]) } ]</span>
+                                                <button type="button" className="close" onClick={ (ev) => this.listMarkerDeleteClickHandler(ev,i) } >
                                                     <span>&times;</span>
                                                 </button>
 
@@ -240,11 +256,9 @@ class App extends Component {
 
                             <YMaps>
                                 <Map state={this.mapState} width={width} height={height} >
-
                                     {
                                         this.state.markers
                                             .map( (placemark,i) => {
-                                                //console.log(i,placemark);
                                                 return <GeoObject
                                                     key={'placemark_'+i}
                                                     geometry={{
@@ -260,20 +274,17 @@ class App extends Component {
                                                         preset: placemark.selected ? "islands#redStretchyIcon" : 'islands#black',
                                                         draggable: placemark.draggable
                                                     }}
-
-                                                    onDragEnd={(event) => {this.mapMarkerOnDragEndHandler(event,placemark,i)}}
-
+                                                    onDragEnd={(ev) => {this.mapMarkerOnDragEndHandler(ev,i)}}
                                                 />
                                             })
 
-                                   }
-
+                                    }
                                     <Polyline
                                         geometry={{
                                             coordinates: Array.from(this.state.markers, (placemark, i) => placemark.coordinates ),
                                         }}
                                         properties={{
-                                            balloonContent: 'Ломаная линия',
+                                            balloonContent: 'Маршрут',
                                         }}
                                         options={{
                                             balloonCloseButton: false,
@@ -288,9 +299,7 @@ class App extends Component {
 
                         </div>
                     </div>
-
                 </div>
-
             </div>
         );
     }
