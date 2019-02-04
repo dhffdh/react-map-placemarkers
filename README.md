@@ -1,5 +1,5 @@
 # Map-Placemarkers on React.js
 
-Тестовое задание JS-разработчик: https://dl.funbox.ru/qt-js.pdf
+Тестовое задание на JS-разработчика: https://dl.funbox.ru/qt-js.pdf
 
-demo: 
+demo: https://dhffdh.github.io/react-map-placemarkers/ 
