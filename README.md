@@ -1,7 +1,5 @@
-# Тестовое задание JS-разработчик
+# Map-Placemarkers on React.js
 
-## react-map-placemarkers
+Тестовое задание JS-разработчик: https://dl.funbox.ru/qt-js.pdf
 
-Задание: https://dl.funbox.ru/qt-js.pdf
-
-- npm start
+demo: 
